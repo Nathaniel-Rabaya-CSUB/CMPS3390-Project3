@@ -3,18 +3,17 @@ using UnityEngine;
 public class randomClothingArms : MonoBehaviour
 {
     public Sprite[] sprites;
-    public randomClothing clothType;
+    public randomClothing randCloth;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        int armCloth = clothType.clothNum;
-        GetComponent<SpriteRenderer>().sprite = sprites[armCloth];
+        GetComponent<SpriteRenderer>().sprite = sprites[randCloth.clothNum];
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+    
     }
 }
