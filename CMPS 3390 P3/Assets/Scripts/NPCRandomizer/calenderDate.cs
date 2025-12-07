@@ -26,7 +26,7 @@ public class calenderDate : MonoBehaviour
         date = month + '/' + yearString;
 
         // set text mesh to date
-        TextMeshProUGUI text = GetComponent<TextMeshProUGUI>();
+        TextMeshPro text = GetComponent<TextMeshPro>();
         text.text = date;
     }
 }

@@ -1,20 +1,36 @@
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class newNPC : MonoBehaviour
 {
-    public bool leave;
-    public bool accepted;
+    public int check;
     public bool set_random;
+    public int score;
+
+    public compareNPCdata Compare;
+
     void Start()
     {
-        transform.position = new Vector3(-3.25f, 1.5f, -4f);
-        leave = false;
-        accepted = false;
-        set_random = true;
+        score = 0;
+        check = 0;
+        set_random = false;
     }
 
-    void Update()
+    void Update() // check == 0 -> wait for player input
     {
+        // player was correct
+        if (check == 1)
+        {
+            score++;
+            set_random = true;
+            check = 0;
+        }
 
+        // player was incorrect
+        if (check == 2)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
     }
 }
