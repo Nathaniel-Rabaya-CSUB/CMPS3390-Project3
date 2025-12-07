@@ -10,6 +10,8 @@ public class WeatherManager : MonoBehaviour
     public ImageController imageController;
 
     public bool debugLogs = true;
+
+    // Refresh rate
     public float refreshInterval = 600f;
 
     private void Start()
@@ -21,9 +23,12 @@ public class WeatherManager : MonoBehaviour
     {
         while (true)
         {
+            // Fetch IP → Geo → Weather and update the UI
             yield return UpdateWeatherData();
 
-            if (refreshInterval <= 0) yield break;
+            if (refreshInterval <= 0)
+                yield break;
+
             yield return new WaitForSeconds(refreshInterval);
         }
     }
@@ -33,14 +38,17 @@ public class WeatherManager : MonoBehaviour
         string error = null;
         string publicIp = null;
 
+        // Get Public IP
         yield return ipService.GetPublicIp(
             ipAddress => publicIp = ipAddress,
             errorMessage => error = "IP error: " + errorMessage
         );
         if (error != null) { Debug.LogError(error); yield break; }
 
+        // Convert IP to Geo Coordinates
         float latitude = 0f;
         float longitude = 0f;
+
         yield return geoService.GetGeoForIp(
             publicIp,
             (lat, lon) => { latitude = lat; longitude = lon; },
@@ -48,7 +56,9 @@ public class WeatherManager : MonoBehaviour
         );
         if (error != null) { Debug.LogError(error); yield break; }
 
+        // Gets Weather for Coordinates
         OpenMeteoResponse weatherData = null;
+
         yield return weatherService.GetHourlyWeather(
             latitude,
             longitude,
@@ -58,10 +68,14 @@ public class WeatherManager : MonoBehaviour
         if (error != null) { Debug.LogError(error); yield break; }
 
         var hourly = weatherData.hourly;
+
         int closestTimeIndex = WeatherService.FindNearestIndex(hourly.time);
         if (closestTimeIndex < 0) yield break;
 
-        float totalPrecipitation = hourly.rain[closestTimeIndex] + hourly.showers[closestTimeIndex];
+        float totalPrecipitation =
+            hourly.rain[closestTimeIndex] +
+            hourly.showers[closestTimeIndex];
+
         bool isDaytime = hourly.is_day[closestTimeIndex] == 1;
         int weatherCode = hourly.weathercode[closestTimeIndex];
 
@@ -77,8 +91,13 @@ public class WeatherManager : MonoBehaviour
             weatherCondition = "day";
 
         if (debugLogs)
-            Debug.Log($"Weather: code={weatherCode}, precipitation={totalPrecipitation}, isDay={isDaytime} -> condition={weatherCondition}");
+            Debug.Log(
+                $"Weather: code={weatherCode}, precipitation={totalPrecipitation}, " +
+                $"isDay={isDaytime} -> condition={weatherCondition}"
+            );
 
+        // Update the UI image based on condition
         imageController.SetCondition(weatherCondition);
     }
 }
+

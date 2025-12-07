@@ -15,9 +15,11 @@ public class ImageController : MonoBehaviour
         targetImage = GetComponent<Image>();
     }
 
+    // Chooses the correct sprite based on a weather condition string
     public void SetCondition(string weatherCondition)
     {
         if (targetImage == null) return;
+
 
         Sprite selectedSprite = weatherCondition switch
         {
@@ -28,6 +30,8 @@ public class ImageController : MonoBehaviour
             _ => daySprite
         };
 
+        // Actually apply the new sprite to the UI
         targetImage.sprite = selectedSprite;
     }
 }
+

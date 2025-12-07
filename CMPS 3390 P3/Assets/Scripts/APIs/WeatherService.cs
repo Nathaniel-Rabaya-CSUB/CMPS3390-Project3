@@ -24,8 +24,11 @@ namespace WeatherApp.API
 
     public class WeatherService : MonoBehaviour
     {
-        public IEnumerator GetHourlyWeather(double latitude, double longitude, Action<OpenMeteoResponse> onSuccess, Action<string> onError)
+        // Requests hourly weather forecast data for given coordinates
+        public IEnumerator GetHourlyWeather(double latitude, double longitude,
+            Action<OpenMeteoResponse> onSuccess, Action<string> onError)
         {
+            // Build the API URL. CultureInfo.InvariantCulture
             string url =
                 $"https://api.open-meteo.com/v1/forecast?" +
                 $"latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
@@ -49,7 +52,11 @@ namespace WeatherApp.API
                 {
                     try
                     {
-                        var weatherResponse = JsonUtility.FromJson<OpenMeteoResponse>(request.downloadHandler.text);
+                        // Convert raw JSON text into our response class
+                        var weatherResponse =
+                            JsonUtility.FromJson<OpenMeteoResponse>(
+                                request.downloadHandler.text);
+
                         onSuccess?.Invoke(weatherResponse);
                     }
                     catch (Exception exception)
@@ -62,7 +69,8 @@ namespace WeatherApp.API
 
         public static int FindNearestIndex(string[] times)
         {
-            if (times == null || times.Length == 0) return -1;
+            if (times == null || times.Length == 0)
+                return -1;
 
             DateTime now = DateTime.Now;
             double smallestTimeDifference = double.MaxValue;
@@ -72,7 +80,9 @@ namespace WeatherApp.API
             {
                 if (DateTime.TryParse(times[i], out DateTime parsedTime))
                 {
-                    double timeDifference = Math.Abs((parsedTime - now).TotalMinutes);
+                    double timeDifference =
+                        Math.Abs((parsedTime - now).TotalMinutes);
+
                     if (timeDifference < smallestTimeDifference)
                     {
                         smallestTimeDifference = timeDifference;
@@ -85,3 +95,4 @@ namespace WeatherApp.API
         }
     }
 }
+

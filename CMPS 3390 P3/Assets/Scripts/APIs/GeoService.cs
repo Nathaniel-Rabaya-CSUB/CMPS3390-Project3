@@ -15,13 +15,16 @@ namespace WeatherApp.API
     [Serializable]
     public class GeoResponse
     {
+        // the API nests coordinates inside a "location" object
         public GeoLocation location;
     }
 
     public class GeoService : MonoBehaviour
     {
+        // API key for geo.ipify service
         public string apiKey;
 
+        // looks up the latitude/longitude for the given public IP.
         public IEnumerator GetGeoForIp(string ipAddress, Action<float, float> onSuccess, Action<string> onError)
         {
             if (string.IsNullOrEmpty(apiKey))
@@ -37,8 +40,10 @@ namespace WeatherApp.API
                 yield return request.SendWebRequest();
 
 #if UNITY_2020_1_OR_NEWER
+                // Unity 2020+ uses 'result' instead of the old error booleans
                 if (request.result != UnityWebRequest.Result.Success)
 #else
+                // Unity versions use these two flags
                 if (request.isHttpError || request.isNetworkError)
 #endif
                 {
@@ -49,7 +54,12 @@ namespace WeatherApp.API
                     try
                     {
                         var geoResponse = JsonUtility.FromJson<GeoResponse>(request.downloadHandler.text);
-                        onSuccess?.Invoke(geoResponse.location.latitude, geoResponse.location.longitude);
+
+                        // Send the lat/lon back through the callback
+                        onSuccess?.Invoke(
+                            geoResponse.location.latitude,
+                            geoResponse.location.longitude
+                        );
                     }
                     catch (Exception exception)
                     {
@@ -60,3 +70,4 @@ namespace WeatherApp.API
         }
     }
 }
+
