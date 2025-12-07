@@ -8,6 +8,7 @@ public class newNPC : MonoBehaviour
 {
     public bool leave;
     public bool accepted;
+    public bool set_random;
 
     void moveRight()
     {
@@ -15,8 +16,10 @@ public class newNPC : MonoBehaviour
     }
     void Start()
     {
+        transform.position = new Vector3(-10f, 1.5f, -4f);
         leave = false;
         accepted = false;
+        set_random = true;
     }
 
     void Update()
@@ -27,7 +30,8 @@ public class newNPC : MonoBehaviour
             transform.position = new Vector3(-10f, 1.5f, -4f);
             leave = false;
             accepted = false;
-            // randomize new NPC ()
+            
+            set_random = true;
         }
 
         // move NPC to the right when NPC is entering
