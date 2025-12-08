@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class compareNPCdata : MonoBehaviour
 {
@@ -6,6 +7,9 @@ public class compareNPCdata : MonoBehaviour
     public bool face_pass;
     public bool hair_pass;
     public bool accessory_pass;
+    public bool set_random;
+    public int check;
+    public int score;
 
     public GameObject StructureNPC;
     public GameObject FaceNPC;
@@ -17,22 +21,35 @@ public class compareNPCdata : MonoBehaviour
     public GameObject HairMon;
     public GameObject AccessoryMon;
 
+    public void Start()
+    {
+        score = 0;
+        check = 0;
+        set_random = false;
+        Setup();
+    }
+
+    void Update() // check == 0 -> wait for player input
+    {
+        // player was correct
+        if (check == 1)
+        {
+            score++;
+            set_random = true;
+            check = 0;
+        }
+
+        // player was incorrect
+        if (check == 2)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
+    }
+
     public int CompareData()
     {
         // set passes to false
         structure_pass = face_pass = hair_pass = accessory_pass = false;
-
-        // set Monitor variables
-        StructureMon = GameObject.Find("Monitor/structure");
-        FaceMon = GameObject.Find("Monitor/face");
-        HairMon = GameObject.Find("Monitor/hair");
-        AccessoryMon = GameObject.Find("Monitor/accessory");
-
-        // set NPC Variables
-        StructureNPC = GameObject.Find("NPC/structure");
-        FaceNPC = GameObject.Find("NPC/face");
-        HairNPC = GameObject.Find("NPC/hair");
-        AccessoryNPC = GameObject.Find("NPC/accessory");
 
         // set SpriteRenderer variables
         SpriteRenderer S_Mon_Sprite = StructureMon.GetComponent<SpriteRenderer>();
@@ -52,5 +69,34 @@ public class compareNPCdata : MonoBehaviour
 
         if (structure_pass == face_pass == hair_pass == accessory_pass == true) { return 1; } // NPC and Monitor are the same
         else { return 2; } // NPC and Monitor are NOT the same
+    }
+
+    public void Setup()
+    {
+        // set Monitor variables
+        StructureMon = GameObject.Find("/Monitor/structure");
+        FaceMon = GameObject.Find("/Monitor/face");
+        HairMon = GameObject.Find("/Monitor/hair");
+        AccessoryMon = GameObject.Find("/Monitor/accessory");
+
+        // set NPC Variables
+        StructureNPC = GameObject.Find("/NPC/structure");
+        FaceNPC = GameObject.Find("/NPC/face");
+        HairNPC = GameObject.Find("/NPC/hair");
+        AccessoryNPC = GameObject.Find("/NPC/accessory");
+    }
+
+    public void AcceptNPC()
+    {
+        int compareCheck = CompareData();
+        if (compareCheck == 1) { check = 1; } // NPC, monitor, and player.accept input DO match
+        else { check = 2; } // NPC, monitor, and player.accept input DON'T match
+    }
+
+    public void DenyNPC()
+    {
+        int compareCheck = CompareData();
+        if (compareCheck == 2) { check = 1; } // NPC, monitor, and player.accept input DON'T match
+        else { check = 2; } // NPC, monitor, and player.accept input DO match
     }
 }
