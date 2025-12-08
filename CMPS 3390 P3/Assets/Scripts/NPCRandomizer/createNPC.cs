@@ -1,3 +1,4 @@
+using UnityEditor.Build;
 using UnityEngine;
 
 public class createNPC : MonoBehaviour
@@ -32,8 +33,13 @@ public class createNPC : MonoBehaviour
     public int accessoryIdx;
     public int clothingIdx;
 
+    // variable used to change monitor face
+    public bool changeMonitor;
+
     void Start()
     {
+        changeMonitor = false;
+
         // assign game object variables
         StructureNPC = GameObject.Find("/NPC/structure");
         FaceNPC = GameObject.Find("/NPC/face");
@@ -75,6 +81,9 @@ public class createNPC : MonoBehaviour
             setArmSprite(TRArm, ref clothingIdx, TA_sprites);
             setArmSprite(BRArm, ref clothingIdx, BA_sprites);
             setArmSprite(BLArm, ref clothingIdx, BA_sprites);
+
+            // set Monitor key
+            changeMonitor = true;
 
             // reset randomize lock
             NPC.set_random = false;
